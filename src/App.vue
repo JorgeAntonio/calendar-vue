@@ -6,10 +6,8 @@ import Footer from './components/Footer.vue';
 </script>
 
 <template>
-  <div class="container">
-    <!-- <Header /> -->
+  <div>
     <EventCalendar />
-    <Footer />
   </div>
 </template>
 

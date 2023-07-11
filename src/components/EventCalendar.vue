@@ -1,15 +1,11 @@
 <script setup>
-import { reactive, ref, watch } from 'vue';
+import { reactive, ref, watch, onMounted } from 'vue';
+import Footer from '../components/Footer.vue';
 import FullCalendar from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import listPlugin from '@fullcalendar/list';
-
-// import bootstrap5Plugin from '@fullcalendar/bootstrap5';
-
-// import 'bootstrap/dist/css/bootstrap.css';
-// import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const id = ref(0)
 const numEvents = ref(1)
@@ -17,15 +13,54 @@ const numEvents = ref(1)
 const options = reactive({
     plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin, listPlugin],
     initialView: 'dayGridMonth',
-    // themeSystem: 'bootstrap5',
     headerToolbar: {
-        left: 'prev,next today',
-        center: 'title',
-        right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+        left: 'title',
+        center: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek',
+        right: 'today prev,next'
+    },
+    footerToolbar: {
+        left: 'prevYear,nextYear',
+        center: '',
+        right: ''
+    },
+    buttonText: {
+        today: 'Hoy',
+        month: 'Mes',
+        week: 'Semana',
+        day: 'Día',
+        list: 'Lista',
+        prevYear: 'Año anterior',
+        nextYear: 'Siguiente año'
+    },
+    titleFormat: {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    },
+    dayHeaderFormat: {
+        weekday: 'long',
+        day: 'numeric',
+        omitCommas: true,
+    },
+    dayHeaderContent: (args) => {
+        return args.date.toLocaleDateString('es', {
+            weekday: 'long',
+            day: 'numeric',
+            omitCommas: true,
+        })
     },
     editable: true,
     selectable: true,
     weekends: true,
+    allDaySlot: false,
+    slotLabelFormat: {
+        hour: '2-digit',
+        minute: '2-digit',
+        omitZeroMinute: false,
+        meridiem: 'short',
+        hour12: false,
+    },
+
     select: (info) => {
         id.value = id.value + 1
 
@@ -48,21 +83,29 @@ const options = reactive({
 })
 
 const generateRandomSchedule = () => {
-    const daysOfWeek = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat']
-    const startTime = 7 // Start time in hours (9 AM)
-    const endTime = 22 // End time in hours (5 PM)
+    const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat']
+    const startTime = 6 // Start time in hours (9 AM)
+    const endTime = 23 // End time in hours (5 PM)
 
     options.events = [] // Clear existing events
 
     for (let i = 0; i < numEvents.value; i++) {
         const randomDay = daysOfWeek[Math.floor(Math.random() * daysOfWeek.length)]
-        const startHour = Math.floor(Math.random() * (endTime - startTime - 1)) + startTime // Minimum duration of 2 hours
-        const endHour = startHour + 2 // Duration of 2 hours
+        const startHour = Math.floor(Math.random() * (endTime - startTime)) + startTime
+        const endHour = startHour + 2 // Minimum duration of 2 hours
 
-        const startDate = new Date()
+        const currentDate = options.initialDate || new Date()
+        const currentDayOfWeek = daysOfWeek[currentDate.getDay()]
+
+        let daysToAdd = daysOfWeek.indexOf(randomDay) - daysOfWeek.indexOf(currentDayOfWeek)
+        if (options.initialView === 'timeGridWeek') {
+            daysToAdd += 7 // Add a week if the initial view is weekly
+        }
+
+        const startDate = new Date(currentDate.getTime())
         startDate.setHours(startHour)
         startDate.setMinutes(0)
-        startDate.setDate(startDate.getDate() + daysOfWeek.indexOf(randomDay))
+        startDate.setDate(startDate.getDate() + daysToAdd)
 
         const endDate = new Date(startDate)
         endDate.setHours(endHour)
@@ -77,58 +120,59 @@ const generateRandomSchedule = () => {
         })
     }
 }
-
 watch(options.events, () => {
     // You can add additional logic here to handle changes in events
+})
+
+onMounted(() => {
+    // Set the current day as the initial date
+    options.initialDate = new Date()
 })
 
 generateRandomSchedule()
 </script>
 
 <template>
-    <div>
-        <div class="bg-gradient-to-r from-green-400 to-green-700 min-h-screen flex flex-col items-center justify-center">
-            <div class="flex items-center gap-6 py-3">
-                <img src="/public/logo_fisi.png" alt="" class="h-48">
-                <h1 class="text-7xl font-bold text-white">FISI - UNAP</h1>
-                <img src="/public/unap.png" alt="" class="h-48">
+    <div class="">
+        <div class="bg-gradient-to-r from-blue-900 to-green-600 h-1/2">
+            <div class=" flex items-center justify-between mx-4 py-5">
+                <div class="flex flex-col gap-4">
+                    <h1 class="text-4xl font-bold text-white">FISI - UNAP</h1>
+                    <h1 class="text-5xl font-bold text-white mb-6 uppercase">Generador de horario</h1>
+                    <label class="font-medium text-lg text-white">Cantidad de Materias</label>
+                    <div class="flex justify-start items-center gap-3">
+                        <input v-model="numEvents" type="number" min="1"
+                            class="rounded-md text-lg px-4 border-none py-2 font-medium bg-gray-200 leading-6"
+                            placeholder="">
+                        <button @click="generateRandomSchedule" type="button"
+                            class="bg-gray-950 text-lg text-white px-4 py-2 rounded-md leading-6 hover:bg-gray-800">
+                            Generar
+                        </button>
+                    </div>
+                </div>
+                <div class="flex justify-center items-center gap-6">
+                    <img src="/public/logo_fisi.png" alt="" class="h-48">
+                    <img src="/public/unap.png" alt="" class="h-48">
+                </div>
             </div>
 
-            <h1 class="text-4xl font-bold text-white mb-6 uppercase">Generador de horarios</h1>
-            <a href="#calendar"
-                class="bg-white hover:bg-gray-200 text-gray-800 font-bold text-xl py-2 px-4 rounded-lg uppercase transition-all duration-300 ease-in-out">
-                Generar
-            </a>
-            <div class="flex items-center gap-4 pt-3">
-                <ul class="flex flex-wrap items-center mt-3 gap-3 text-sm font-medium sm:mt-0">
-                    <li>
-                        <router-link to="" class="hover:underline">Acerca de</router-link>
-                    </li>
-                    <li>
-                        <router-link href="#" class="hover:underline">Contactar</router-link>
-                    </li>
-                </ul>
-            </div>
+
         </div>
 
-        <div class="p-4" id="calendar">
-            <label for="" class="font-medium text-lg">Materias a generar:</label>
-            <div class="flex justify-start items-center gap-3 py-3">
-                <input v-model="numEvents" type="number" min="1" class="border rounded-md px-4 py-2 font-medium bg-gray-200"
-                    placeholder="">
-                <button @click="generateRandomSchedule" type="button"
-                    class="bg-blue-950 text-white px-4 py-2 rounded-md hover:bg-blue-900">
-                    Generar
-                </button>
-            </div>
-            <FullCalendar v-bind:options="options" />
+        <div class="mx-4 py-5">
+            <FullCalendar v-bind:options="options" @viewSkeletonRendered="scrollToCalendar" />
         </div>
+        <Footer />
     </div>
 </template>
-  
-  
-  
-  
 
+<script>
+const scrollToCalendar = () => {
+    const calendarElement = document.getElementById('calendar')
+    if (calendarElement) {
+        calendarElement.scrollIntoView({ behavior: 'smooth' })
+    }
+}
+</script>
 
 <style scoped></style>
