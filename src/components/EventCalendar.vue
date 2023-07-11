@@ -87,17 +87,17 @@ generateRandomSchedule()
 
 <template>
     <div>
-        <div class="bg-gradient-to-r from-blue-400 to-purple-500 min-h-screen flex flex-col items-center justify-center">
-            <div class="flex items-center gap-4 py-3">
-                <img src="/public/logo_fisi.png" alt="" class="h-36">
-                <h1 class="text-5xl font-bold text-white">FISI - UNAP</h1>
-                <img src="https://enlinea.unapiquitos.edu.pe/images/escudo.png" alt="" class="h-36">
+        <div class="bg-gradient-to-r from-green-400 to-green-700 min-h-screen flex flex-col items-center justify-center">
+            <div class="flex items-center gap-6 py-3">
+                <img src="/public/logo_fisi.png" alt="" class="h-48">
+                <h1 class="text-7xl font-bold text-white">FISI - UNAP</h1>
+                <img src="/public/unap.png" alt="" class="h-48">
             </div>
 
             <h1 class="text-4xl font-bold text-white mb-6 uppercase">Generador de horarios</h1>
             <a href="#calendar"
-                class="bg-white hover:bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded uppercase transition-all duration-300 ease-in-out">
-                Probar
+                class="bg-white hover:bg-gray-200 text-gray-800 font-bold text-xl py-2 px-4 rounded-lg uppercase transition-all duration-300 ease-in-out">
+                Generar
             </a>
             <div class="flex items-center gap-4 pt-3">
                 <ul class="flex flex-wrap items-center mt-3 gap-3 text-sm font-medium sm:mt-0">
