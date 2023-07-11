@@ -137,8 +137,8 @@ generateRandomSchedule()
         <div class="bg-gradient-to-r from-blue-900 to-green-600 h-1/2">
             <div class=" flex items-center justify-between mx-4 py-5">
                 <div class="flex flex-col gap-4">
-                    <h1 class="text-2xl font-bold text-white">FISI - UNAP</h1>
-                    <h1 class="text-5xl font-bold text-white uppercase">Generador de horario</h1>
+                    <h1 class="text-2xl font-medium text-white">FISI - UNAP</h1>
+                    <h1 class="text-5xl font-medium text-white uppercase">Generador de horario</h1>
                     <label class="font-medium text-base md:text-lg text-white">Cantidad de Materias</label>
                     <div class="flex justify-start items-center gap-3">
                         <input v-model="numEvents" type="number" min="1"
@@ -150,7 +150,7 @@ generateRandomSchedule()
                         </button>
                     </div>
                 </div>
-                <div class="hidden md:flex justify-center items-center gap-6">
+                <div class="hidden md:flex justify-center items-center gap-4">
                     <img src="/public/logo_fisi.png" alt="" class="h-48">
                     <img src="/public/unap.png" alt="" class="h-48">
                 </div>
